@@ -1,48 +1,60 @@
+require("dotenv").config();
 const express = require("express");
-const app = express();
+const mongoose = require("mongoose");
+const backboardService = require("./services/backboard");
 
+const app = express();
 app.use(express.json());
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
 // GET all parties
 app.get("/parties", (req, res) => {
   res.json([
     { id: 1, name: "Liberal Party" },
     { id: 2, name: "Conservative Party" },
-    { id: 3, name: "Green Party" }
+    { id: 3, name: "NDP" }
   ]);
 });
 
 // GET politicians by party
 app.get("/politicians/:partyId", (req, res) => {
-  const partyId = req.params.partyId;
-
   res.json([
-    { id: 1, name: "Politician A", partyId: partyId },
-    { id: 2, name: "Politician B", partyId: partyId }
+    { id: 1, name: "Justin Trudeau", partyId: req.params.partyId },
+    { id: 2, name: "Mark Carney", partyId: req.params.partyId }
   ]);
 });
 
 // GET promises by politician
 app.get("/promises/:politicianId", (req, res) => {
-  const politicianId = req.params.politicianId;
-
   res.json([
-    { id: 1, promise: "Lower taxes", politicianId: politicianId },
-    { id: 2, promise: "Improve healthcare", politicianId: politicianId }
+    { id: 1, promise: "Build 10,000 affordable homes", status: "Pending" },
+    { id: 2, promise: "Cut income taxes by 10%", status: "Pending" }
   ]);
 });
 
-// update a promise
+// Update a promise
 app.put("/promises/:id", (req, res) => {
-  const id = req.params.id;
-  const data = req.body;
-
-  res.json({
-    message: `Promise ${id} updated`,
-    updatedData: data
-  });
+  res.json({ message: `Promise ${req.params.id} updated`, updatedData: req.body });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+// POST /ai-audit/:politicianId
+app.post("/ai-audit/:politicianId", async (req, res) => {
+  try {
+    console.log(`🔄 Running audit for politician: ${req.params.politicianId}`);
+    const promises = [
+      { _id: "1", original_quote: "Build 10,000 affordable homes by 2025" },
+      { _id: "2", original_quote: "Cut income taxes by 10% in first year" }
+    ];
+    const results = await backboardService.verifyPromises(promises);
+    res.json({ success: true, results });
+  } catch (err) {
+    console.error("❌ Audit error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
+
+app.listen(3000, () => console.log("🚀 Server running on port 3000"));
