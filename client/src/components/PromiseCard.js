@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const statusColors = {
   Fulfilled: "bg-emerald-100 text-emerald-800",
@@ -6,21 +6,32 @@ const statusColors = {
   Pending: "bg-amber-100 text-amber-800",
   Broken: "bg-rose-100 text-rose-800",
   Delayed: "bg-orange-100 text-orange-800",
+  "Partially Completed": "bg-orange-100 text-orange-800",
 };
 
 export default function PromiseCard({ promise }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const statusClass = statusColors[promise.status] || "bg-slate-100 text-slate-700";
   const progress = promise.completion_percentage ?? promise.progress ?? 0;
+
+  // ✅ support both field names
+  const reasoning = promise.ai_reasoning || promise.rationale || "";
+  let sources = promise.sources || promise.evidence_links || [];
+
+  // Ensure sources is always an array to prevent mapping over string characters
+  if (typeof sources === "string") {
+    sources = [sources];
+  }
 
   return (
     <article className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
           <p className="text-slate-900 font-medium text-[15px] leading-snug">
-            {promise.promise || promise.original_quote}
+            {promise.promise || promise.original_quote || promise.text}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs text-slate-500">{promise.politician || "Politician"}</span>
+            <span className="text-xs text-slate-500">{promise.politician || promise.politicianId || "Politician"}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs text-slate-500">{promise.party || "Party"}</span>
             <span className="text-slate-300">•</span>
@@ -46,27 +57,40 @@ export default function PromiseCard({ promise }) {
         </div>
       </div>
 
-      {promise.rationale && (
-        <p className="text-sm text-slate-600 leading-relaxed mb-4 line-clamp-2">
-          {promise.rationale}
-        </p>
+      {/* ✅ AI Reasoning */}
+      {reasoning && (
+        <div className="mb-4">
+          <p className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
+            {reasoning}
+          </p>
+          {reasoning.length > 100 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              {isExpanded ? "Show less" : "Read more"}
+            </button>
+          )}
+        </div>
       )}
 
-      <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-        <span className="text-xs text-slate-400">{promise.election || "Election 2025"}</span>
-        {promise.evidence_links?.length > 0 && (
-          <a
-            href={promise.evidence_links[0]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Source →
-          </a>
+      {/* ✅ Sources */}
+      <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
+        {sources.length > 0 ? (
+          sources.map((url, i) => (
+            <a
+              key={i}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Source {i + 1} →
+            </a>
+          ))
+        ) : (
+          <span className="text-xs text-slate-400">No sources</span>
         )}
-        <button className="ml-auto text-xs font-medium text-blue-600 hover:text-blue-700 group-hover:underline">
-          View Clip
-        </button>
       </div>
     </article>
   );
