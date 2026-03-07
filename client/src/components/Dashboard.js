@@ -3,7 +3,6 @@ import axios from "axios";
 
 const API_BASE = "http://localhost:3000";
 
-// Simple bar chart component (no external deps)
 function MiniBarChart({ data, color = "blue" }) {
   const max = Math.max(...data.map((d) => d.value), 1);
   const colorMap = {
@@ -28,88 +27,111 @@ function MiniBarChart({ data, color = "blue" }) {
   );
 }
 
+const STATUS_COLORS = {
+  "Fulfilled": "text-emerald-600",
+  "In Progress": "text-blue-600",
+  "Broken": "text-rose-600",
+  "Pending": "text-amber-600",
+  "Partially Completed": "text-orange-500",
+};
+
 export default function Dashboard() {
-  const [parties, setParties] = useState([]);
-  const [promisesSummary, setPromisesSummary] = useState(null);
+  const [promises, setPromises] = useState([]);
+  const [politicians] = useState(["carney", "poilievre", "singh"]);
+
+  const fetchPromises = () => {
+    return Promise.all(
+      politicians.map((id) =>
+        axios.get(`${API_BASE}/promises/${id}`).then((res) => res.data)
+      )
+    )
+      .then((results) => setPromises(results.flat()))
+      .catch(() => setPromises([]));
+  };
 
   useEffect(() => {
-    axios
-      .get(`${API_BASE}/parties`)
-      .then((res) => setParties(res.data))
-      .catch(() => setParties([]));
+    fetchPromises();
   }, []);
+  // Real stats from MongoDB data
+  const total = promises.length;
+  const avgCompletion = total
+    ? Math.round(promises.reduce((sum, p) => sum + (p.completion_percentage || 0), 0) / total)
+    : 0;
+  const fulfilled = promises.filter((p) => p.status === "Fulfilled").length;
+  const broken = promises.filter((p) => p.status === "Broken").length;
 
-  // Demo data for visualization
-  const topicData = [
-    { label: "Housing", value: 45 },
-    { label: "Climate", value: 28 },
-    { label: "Health", value: 62 },
-    { label: "Economy", value: 38 },
-    { label: "Other", value: 22 },
-  ];
+  // Real topic chart data
+  const topicCounts = promises.reduce((acc, p) => {
+    const topic = p.topic || "Other";
+    acc[topic] = (acc[topic] || 0) + 1;
+    return acc;
+  }, {});
+  const topicData = Object.entries(topicCounts).map(([label, value]) => ({ label, value }));
 
-  const statusData = [
-    { label: "In Progress", value: 42 },
-    { label: "Fulfilled", value: 18 },
-    { label: "Pending", value: 35 },
-    { label: "Broken", value: 5 },
-  ];
+  // Real status chart data
+  const statusCounts = promises.reduce((acc, p) => {
+    const status = p.status || "Pending";
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {});
+  const statusData = Object.entries(statusCounts).map(([label, value]) => ({ label, value }));
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Dashboard</h2>
-        <p className="text-slate-600 mt-1">Overview of political promise progress</p>
+      {/* Hero Section */}
+      <div className="bg-indigo-600 rounded-2xl p-8 md:p-12 text-white shadow-lg relative overflow-hidden">
+        <div className="relative z-10 max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">Welcome to Pledgely</h1>
+          <p className="text-indigo-100 text-lg md:text-xl mb-8">
+            The AI-powered political promise tracker. We use advanced language models to evaluate statements, track legislation, and hold politicians accountable to their word.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <a
+              href="/database" // Assuming they use routing or this is just a mockup
+              className="bg-indigo-500 hover:bg-indigo-400 border border-indigo-400 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+            >
+              Browse Database →
+            </a>
+          </div>
+        </div>
+        {/* Decorative background element */}
+        <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-indigo-500 to-transparent opacity-50 blur-3xl transform translate-x-1/4 -translate-y-1/4 rounded-full pointer-events-none"></div>
       </div>
 
+      {/* Real stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Total Promises</p>
-          <p className="text-3xl font-bold text-slate-900 mt-1">156</p>
+          <p className="text-3xl font-bold text-slate-900 mt-1">{total}</p>
           <p className="text-xs text-slate-400 mt-1">Across all parties</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Avg. Completion</p>
-          <p className="text-3xl font-bold text-emerald-600 mt-1">38%</p>
+          <p className="text-3xl font-bold text-emerald-600 mt-1">{avgCompletion}%</p>
           <p className="text-xs text-slate-400 mt-1">Weighted by status</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Fulfilled</p>
-          <p className="text-3xl font-bold text-blue-600 mt-1">28</p>
+          <p className="text-3xl font-bold text-blue-600 mt-1">{fulfilled}</p>
           <p className="text-xs text-slate-400 mt-1">Promises delivered</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">Flagged</p>
-          <p className="text-3xl font-bold text-amber-600 mt-1">12</p>
-          <p className="text-xs text-slate-400 mt-1"> inconsistencies</p>
+          <p className="text-sm font-medium text-slate-500">Broken</p>
+          <p className="text-3xl font-bold text-rose-600 mt-1">{broken}</p>
+          <p className="text-xs text-slate-400 mt-1">Promises not kept</p>
         </div>
       </div>
 
+      {/* Real charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 className="font-semibold text-slate-900 mb-4">Promises by Topic</h3>
-          <MiniBarChart data={topicData} color="blue" />
+          {topicData.length > 0 ? <MiniBarChart data={topicData} color="blue" /> : <p className="text-slate-400 text-sm">Loading...</p>}
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 className="font-semibold text-slate-900 mb-4">Status Distribution</h3>
-          <MiniBarChart data={statusData} color="emerald" />
+          {statusData.length > 0 ? <MiniBarChart data={statusData} color="emerald" /> : <p className="text-slate-400 text-sm">Loading...</p>}
         </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-        <h3 className="font-semibold text-slate-900 mb-4">Recent Activity</h3>
-        <ul className="space-y-3">
-          {[
-            { text: "Build 1.4M homes by 2030 — Updated: 27% completed", time: "2h ago" },
-            { text: "Net-zero by 2050 — New evidence added", time: "5h ago" },
-            { text: "Healthcare wait times — AI verdict: Partially True", time: "1d ago" },
-          ].map((item, i) => (
-            <li key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-              <span className="text-sm text-slate-700">{item.text}</span>
-              <span className="text-xs text-slate-400">{item.time}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

@@ -71,9 +71,9 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
             onChange={(e) => setParty(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           >
-            {(parties.length ? parties : PARTIES).map((p) => (
-              <option key={p.id || p} value={p.id || p}>
-                {p.name || p}
+            {(parties.length > 0 ? ["All Parties", ...parties.map(p => p.name)] : PARTIES).map((p, i) => (
+              <option key={i} value={p}>
+                {p}
               </option>
             ))}
           </select>

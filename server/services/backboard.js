@@ -43,6 +43,7 @@ async function getOrCreateAssistant() {
         system_prompt: `You are a strict, objective Parliamentary Auditor.
         Evaluate whether political promises are Pending, In Progress, Fulfilled, or Broken.
         Calculate a completion percentage (0-100%) and write a 2-sentence rationale.
+        You MUST provide a REAL, specific URL from a credible Canadian news source (like CBC, Global News, or CTV) that verifies your status and rationale.
         Always respond in valid JSON only. Never use markdown or backticks.`
     });
 
@@ -75,7 +76,8 @@ async function verifyPromises(promises) {
             {
                 "status": "In Progress or Fulfilled or Broken or Pending",
                 "completion_percentage": 60,
-                "rationale": "2 sentence explanation."
+                "rationale": "2 sentence explanation.",
+                "source_url": "https://www.cbc.ca/news/specific-article-url"
             }`,
             stream: "false"
         }, true);
