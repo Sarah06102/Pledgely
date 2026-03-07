@@ -1,9 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const backboardService = require("./services/backboard");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
@@ -55,6 +57,14 @@ app.post("/ai-audit/:politicianId", async (req, res) => {
     console.error("❌ Audit error:", err.message);
     res.status(500).json({ error: err.message });
   }
+});
+
+// POST /upload/analyze - stub for video upload + analysis
+// TODO: Add multer for file upload, Cloudinary for storage, Gemini for transcript + claim extraction
+app.post("/upload/analyze", (req, res) => {
+  res.status(501).json({
+    error: "Video upload/analyze not yet implemented. Add multer, Cloudinary, and Gemini API.",
+  });
 });
 
 app.listen(3000, () => console.log("🚀 Server running on port 3000"));
