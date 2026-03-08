@@ -20,7 +20,7 @@ Pledgely uses AI to scrape, analyze, and audit political promises made by Canadi
 ## 🧠 How It Works
 
 1. Promises are seeded into MongoDB from `seed.js`
-2. `seedDocuments.js` sends each promise to a **Backboard AI agent**
+2. `seedDocuments.js` sends each promise to a **Backboard AI agent** and `seedFromWeb.js` sends data from the web
 3. The agent searches the web, evaluates progress, and returns:
    - `status` → Pending / In Progress / Fulfilled / Broken
    - `completion_percentage` → 0–100%
