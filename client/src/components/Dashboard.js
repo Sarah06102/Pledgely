@@ -4,10 +4,11 @@ import axios from "axios";
 const API_BASE = "http://localhost:3000";
 
 // Simple bar chart component (no external deps)
-function MiniBarChart({ data, color = "blue" }) {
+function MiniBarChart({ data, color = "pink" }) {
   const max = Math.max(...data.map((d) => d.value), 1);
   const colorMap = {
     blue: "bg-blue-500",
+    pink: "bg-pink-500",
     emerald: "bg-emerald-500",
     amber: "bg-amber-500",
     rose: "bg-rose-500",
@@ -18,7 +19,7 @@ function MiniBarChart({ data, color = "blue" }) {
       {data.map((d, i) => (
         <div key={i} className="flex-1 flex flex-col items-center gap-1">
           <div
-            className={`w-full rounded-t ${colorMap[color] || colorMap.blue}`}
+            className={`w-full rounded-t ${colorMap[color] || colorMap.pink}`}
             style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? 4 : 0 }}
           />
           <span className="text-[10px] text-slate-500 truncate w-full text-center">{d.label}</span>
@@ -75,7 +76,7 @@ export default function Dashboard() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Fulfilled</p>
-          <p className="text-3xl font-bold text-blue-600 mt-1">28</p>
+          <p className="text-3xl font-bold text-pink-600 mt-1">28</p>
           <p className="text-xs text-slate-400 mt-1">Promises delivered</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
@@ -88,7 +89,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 className="font-semibold text-slate-900 mb-4">Promises by Topic</h3>
-          <MiniBarChart data={topicData} color="blue" />
+          <MiniBarChart data={topicData} color="pink" />
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 className="font-semibold text-slate-900 mb-4">Status Distribution</h3>
