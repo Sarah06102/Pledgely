@@ -3,14 +3,14 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
 import PromiseDatabase from "./components/PromiseDatabase";
-import VideoUpload from "./components/VideoUpload";
 import Compare from "./components/Compare";
 import LandingPage from "./pages/LandingPage";
+import VideoUpload from "./components/VideoUpload";
 
 const VIEWS = {
   dashboard: Dashboard,
   promises: PromiseDatabase,
-  upload: VideoUpload,
+  audit: VideoUpload,
   compare: Compare,
 };
 

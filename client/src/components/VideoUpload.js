@@ -1,28 +1,40 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
+import PromiseCard from "./PromiseCard";
 
 const API_BASE = "http://localhost:3000";
 
-export default function VideoUpload() {
+export default function VideoUpload({ onViewChange }) {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(() => {
+    const saved = localStorage.getItem("lastAuditResult");
+    return saved ? JSON.parse(saved) : null;
+  });
   const [error, setError] = useState(null);
   const [politicianId, setPoliticianId] = useState("");
   const fileInputRef = useRef(null);
 
+  // Persist result to localStorage whenever it changes
+  React.useEffect(() => {
+    if (result) {
+      localStorage.setItem("lastAuditResult", JSON.stringify(result));
+    } else {
+      localStorage.removeItem("lastAuditResult");
+    }
+  }, [result]);
+
   const handleFileChange = (e) => {
     const selected = e.target.files?.[0];
     if (selected) {
-      if (!selected.type.startsWith("video/") && !selected.type.startsWith("audio/")) {
-        setError("Please select a video or audio file.");
+      if (selected.type !== "application/pdf") {
+        setError("Please select a PDF file.");
         setFile(null);
         return;
       }
       setFile(selected);
       setError(null);
-      setResult(null);
     }
   };
 
@@ -38,7 +50,7 @@ export default function VideoUpload() {
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("auditPdf", file);
       if (politicianId) formData.append("politicianId", politicianId);
 
       const res = await axios.post(`${API_BASE}/upload/analyze`, formData, {
@@ -68,9 +80,9 @@ export default function VideoUpload() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Upload & Analyze</h2>
+        <h2 className="text-2xl font-bold text-slate-900">Document Audit</h2>
         <p className="text-slate-600 mt-1">
-          Upload a speech or debate video. AI will extract claims, match them to promises, and fact-check.
+          Upload an official party platform or government document (PDF). AI will extract promises, match them, and update their status.
         </p>
       </div>
 
@@ -83,7 +95,7 @@ export default function VideoUpload() {
           <input
             ref={fileInputRef}
             type="file"
-            accept="video/*,audio/*"
+            accept="application/pdf"
             onChange={handleFileChange}
             className="hidden"
           />
@@ -105,10 +117,10 @@ export default function VideoUpload() {
               onClick={() => fileInputRef.current?.click()}
               className="w-full py-4 text-slate-600 hover:text-slate-900 transition-colors"
             >
-              <span className="text-4xl block mb-2">🎬</span>
-              <span className="font-medium">Click to select video or audio</span>
+              <span className="text-4xl block mb-2">📄</span>
+              <span className="font-medium">Click to select a PDF</span>
               <span className="block text-sm text-slate-500 mt-1">
-                MP4, WebM, MOV, MP3, WAV
+                Only PDF files are supported
               </span>
             </button>
           )}
@@ -150,22 +162,35 @@ export default function VideoUpload() {
 
       {result && (
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-900 mb-4">Analysis Results</h3>
-          <pre className="p-4 bg-slate-50 rounded-lg text-sm overflow-auto max-h-96">
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <h3 className="font-semibold text-slate-900 mb-4 text-xl">Analysis Results</h3>
+          
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100 flex flex-col items-center shadow-sm">
+              <span className="text-3xl font-bold text-emerald-700">{result.summary?.fulfilled || 0}</span>
+              <span className="text-sm font-medium text-emerald-800 mt-1">Fulfilled</span>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 flex flex-col items-center shadow-sm">
+              <span className="text-3xl font-bold text-blue-700">{result.summary?.inProgress || 0}</span>
+              <span className="text-sm font-medium text-blue-800 mt-1">In Progress</span>
+            </div>
+            <div className="bg-amber-50 p-4 rounded-lg border border-amber-100 flex flex-col items-center shadow-sm">
+              <span className="text-3xl font-bold text-amber-700">{result.summary?.pending || 0}</span>
+              <span className="text-sm font-medium text-amber-800 mt-1">Pending</span>
+            </div>
+            <div className="bg-rose-50 p-4 rounded-lg border border-rose-100 flex flex-col items-center shadow-sm">
+              <span className="text-3xl font-bold text-rose-700">{result.summary?.broken || 0}</span>
+              <span className="text-sm font-medium text-rose-800 mt-1">Broken</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            {result.results?.map((promise) => (
+              <PromiseCard key={promise.id} promise={promise} onViewChange={onViewChange} />
+            ))}
+          </div>
         </div>
       )}
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 max-w-2xl">
-        <h3 className="font-medium text-amber-800 mb-2">How to implement backend</h3>
-        <p className="text-sm text-amber-700 leading-relaxed">
-          Add a <code className="bg-amber-100 px-1 rounded">POST /upload/analyze</code> endpoint that:
-          1) Receives the file via multer/form-data; 2) Uploads video to Cloudinary; 3) Transcribes
-          with Whisper or Gemini; 4) Uses Gemini API to extract claims; 5) Matches claims to promises
-          in the DB; 6) Returns extracted claims, matched promises, and fact-check verdicts.
-        </p>
-      </div>
     </div>
   );
 }

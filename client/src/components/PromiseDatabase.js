@@ -5,9 +5,9 @@ import SearchFilters from "./SearchFilters";
 
 const API_BASE = "http://localhost:3000";
 
-const POLITICIANS = ["carney", "poilievre", "singh", "blanchet", "may"];
+const POLITICIANS = ["carney", "poilievre", "singh"];
 
-export default function PromiseDatabase() {
+export default function PromiseDatabase({ onViewChange }) {
   const [promises, setPromises] = useState([]);
   const [parties, setParties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,30 +17,26 @@ export default function PromiseDatabase() {
     // Fetch real promises from all politicians
     Promise.all([
       axios.get(`${API_BASE}/parties`).then((res) => res.data).catch(() => []),
-      ...POLITICIANS.map((id) =>
-        axios.get(`${API_BASE}/promises/${id}`).then((res) => res.data).catch(() => [])
-      ),
-    ]).then(([partiesData, ...promiseArrays]) => {
+      axios.get(`${API_BASE}/promises`).then((res) => res.data).catch(() => []),
+    ]).then(([partiesData, promisesData]) => {
       setParties(partiesData);
       // Normalize MongoDB fields to match what PromiseCard expects
-      const allPromises = promiseArrays.flat().map((p) => {
+      const allPromises = promisesData.map((p) => {
         let name = p.politicianId || p.politician;
         if (name === "carney") name = "Mark Carney";
         else if (name === "poilievre") name = "Pierre Poilievre";
         else if (name === "singh") name = "Jagmeet Singh";
-        else if (name === "blanchet") name = "Yves-François Blanchet";
-        else if (name === "may") name = "Elizabeth May";
 
         return {
-          id: p._id,
-          promise: p.text || p.promise,
+          id: p.id || p._id,
+          promise: p.promise || p.text || p.original_quote,
           politician: name,
           party: p.party || "",
           topic: p.topic || "Other",
           status: p.status || "Pending",
-          completion_percentage: p.completion_percentage || 0,
-          ai_reasoning: p.ai_reasoning || "",
-          sources: p.sources || [],
+          completion_percentage: p.completion_percentage || p.progress || 0,
+          ai_reasoning: p.ai_reasoning || p.rationale || "",
+          sources: p.sources || p.evidence_links || [],
         };
       });
       setPromises(allPromises);
@@ -54,7 +50,6 @@ export default function PromiseDatabase() {
 
     // 2. Topic Filter
     if (filters.topic && filters.topic !== "All Topics" && p.topic !== filters.topic) return false;
-
     // 3. Party Filter
     const derivedParty = p.politician === "Mark Carney" || p.politician === "carney" ? "Liberal Party"
       : p.politician === "Pierre Poilievre" || p.politician === "poilievre" ? "Conservative Party"
@@ -70,10 +65,9 @@ export default function PromiseDatabase() {
       if (fp.includes("liberal") && dp.includes("liberal")) isMatch = true;
       if (fp.includes("conservative") && dp.includes("conservative")) isMatch = true;
       if ((fp.includes("ndp") || fp.includes("democratic")) && dp.includes("democratic")) isMatch = true;
-      if (fp.includes("green") && dp.includes("green")) isMatch = true;
-      if (fp.includes("bloc") && dp.includes("bloc")) isMatch = true;
 
-      if (!isMatch) return false;
+      // Note: Party mapping might require joining, but string match for now
+      if (!isMatch && (!p.party || p.party !== filters.party)) return false;
     }
 
     // 4. Keyword Search Filter
@@ -114,7 +108,7 @@ export default function PromiseDatabase() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredPromises.map((p) => (
-            <PromiseCard key={p.id} promise={p} />
+            <PromiseCard key={p.id} promise={p} onViewChange={onViewChange} />
           ))}
         </div>
       )}

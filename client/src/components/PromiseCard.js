@@ -9,7 +9,7 @@ const statusColors = {
   "Partially Completed": "bg-orange-100 text-orange-800",
 };
 
-export default function PromiseCard({ promise }) {
+export default function PromiseCard({ promise, onViewChange }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const statusClass = statusColors[promise.status] || "bg-slate-100 text-slate-700";
   const progress = promise.completion_percentage ?? promise.progress ?? 0;
@@ -31,11 +31,11 @@ export default function PromiseCard({ promise }) {
             {promise.promise || promise.original_quote || promise.text}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs text-slate-500">{promise.politician || promise.politicianId || "Politician"}</span>
+            <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{promise.politician || promise.politicianId || "Unknown Politician"}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs text-slate-500">{promise.party || "Party"}</span>
             <span className="text-slate-300">•</span>
-            <span className="text-xs text-slate-500">{promise.topic || "General"}</span>
+            <span className="text-xs font-medium text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">{promise.topic || "Policy"}</span>
           </div>
         </div>
         <span className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}`}>
@@ -59,14 +59,14 @@ export default function PromiseCard({ promise }) {
 
       {/* ✅ AI Reasoning */}
       {reasoning && (
-        <div className="mb-4">
-          <p className={`text-sm text-slate-600 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
-            {reasoning}
+        <div className="mb-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+          <p className={`text-sm text-slate-600 leading-relaxed italic ${isExpanded ? "" : "line-clamp-3"}`}>
+            "{reasoning}"
           </p>
-          {reasoning.length > 100 && (
+          {reasoning.length > 150 && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-1 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
+              className="mt-2 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
               {isExpanded ? "Show less" : "Read more"}
             </button>
@@ -77,17 +77,41 @@ export default function PromiseCard({ promise }) {
       {/* Sources */}
       <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
         {sources.length > 0 ? (
-          sources.map((url, i) => (
-            <a
-              key={i}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-pink-600 hover:text-pink-700 font-medium"
-            >
-              Source {i + 1} →
-            </a>
-          ))
+          sources.map((source, i) => {
+            if (!source.startsWith("http")) {
+              if (source === "PDF Extraction" || source === "PDF Extraction via Script") {
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      if (onViewChange) onViewChange('dashboard');
+                      else if (window.setView) window.setView('dashboard');
+                      else window.location.href = '/?view=dashboard'; // Fallback
+                    }}
+                    className="text-xs text-pink-600 hover:text-pink-700 font-medium flex items-center"
+                  >
+                    ✨ {source} →
+                  </button>
+                );
+              }
+              return (
+                <span key={i} className="text-xs text-slate-500 font-medium flex items-center">
+                  ✨ {source}
+                </span>
+              );
+            }
+            return (
+              <a
+                key={i}
+                href={source}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-pink-600 hover:text-pink-700 font-medium"
+              >
+                Source {i + 1} →
+              </a>
+            );
+          })
         ) : (
           <span className="text-xs text-slate-400">No sources</span>
         )}

@@ -39,7 +39,9 @@ const STATUS_COLORS = {
 
 export default function Dashboard({ onViewChange }) {
   const [promises, setPromises] = useState([]);
-  const [politicians] = useState(["carney", "poilievre", "singh", "blanchet", "may"]);
+  const [politicians] = useState(["carney", "poilievre", "singh"]);
+  const [, setParties] = useState([]); // Ignore unused parties var
+  const [platforms, setPlatforms] = useState([]);
 
   const fetchPromises = () => {
     return Promise.all(
@@ -53,6 +55,23 @@ export default function Dashboard({ onViewChange }) {
 
   useEffect(() => {
     fetchPromises();
+
+    axios
+      .get(`${API_BASE}/parties`)
+      .then((res) => setParties(res.data))
+      .catch(() => setParties([]));
+
+    axios
+      .get(`${API_BASE}/platforms`)
+      .then((res) => setPlatforms(res.data))
+      .catch(() => {
+        // Fallback demo data if endpoint fails
+        setPlatforms([
+          { id: 1, title: "2024 Liberal Platform", uploader: "CitizenAudit", time: "2h ago", promiseCount: 42 },
+          { id: 2, title: "Conservative Housing Strategy", uploader: "HousingWatch", time: "5h ago", promiseCount: 18 },
+          { id: 3, title: "NDP Climate Action Plan", uploader: "EnviroTracker", time: "1d ago", promiseCount: 24 }
+        ]);
+      });
   }, []);
   // Real stats from MongoDB data
   const total = promises.length;
@@ -133,6 +152,53 @@ export default function Dashboard({ onViewChange }) {
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <h3 className="font-semibold text-slate-900 mb-4">Status Distribution</h3>
           {statusData.length > 0 ? <MiniBarChart data={statusData} color="emerald" /> : <p className="text-slate-400 text-sm">Loading...</p>}
+        </div>
+      </div>
+
+
+      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>📚</span>
+              <span>Library</span>
+            </h3>
+            <p className="text-slate-500 text-sm mt-1">
+              Explore primary source documents recently analyzed by you.
+              Our AI ingests official documents to ensure 100% accuracy.
+            </p>
+          </div>
+          <button
+            onClick={() => onViewChange && onViewChange('audit')}
+            className="shrink-0 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
+          >
+            Upload Document
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {platforms.map((platform, i) => (
+            <div key={i} className="border border-slate-200 rounded-xl p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group bg-slate-50/50 hover:bg-white">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-xl shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  📄
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900 line-clamp-2 leading-snug">{platform.title}</h4>
+                  <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+                    <span className="bg-slate-200/50 px-2 py-0.5 rounded-full font-medium text-slate-700">{platform.uploader}</span>
+                    <span>•</span>
+                    <span>{platform.time}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-slate-200/60 flex justify-end items-center">
+                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
+                  {platform.promiseCount || 10} Promises
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

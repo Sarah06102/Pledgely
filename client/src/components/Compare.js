@@ -15,7 +15,7 @@ const POLITICIAN_NAMES = {
   may: "Elizabeth May",
 };
 
-export default function Compare() {
+export default function Compare({ onViewChange }) {
   const [topic, setTopic] = useState("Housing");
   const [polA, setPolA] = useState("Mark Carney");
   const [polB, setPolB] = useState("Pierre Poilievre");
@@ -108,7 +108,7 @@ export default function Compare() {
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {stats.promises.map((p) => (
-                    <PromiseCard key={p.id} promise={p} />
+                    <PromiseCard key={p.id} promise={p} onViewChange={onViewChange} />
                   ))}
                 </div>
               )}
