@@ -10,12 +10,17 @@ const PromiseModel = require("./models/Promise");
 const multer = require("multer");
 const { PDFParse } = require("pdf-parse");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 const upload = multer({ storage: multer.memoryStorage() });
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(uploadsDir));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -108,7 +113,8 @@ app.get("/promises", async (req, res) => {
       status: p.status,
       progress: p.progress || p.completion_percentage,
       rationale: p.rationale || p.ai_reasoning,
-      sources: p.sources || p.evidence_links || []
+      sources: p.sources || p.evidence_links || [],
+      pdfUrl: p.pdfUrl
     }));
 
     res.json(formatted);
@@ -181,8 +187,15 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
     // Prevent duplicate uploads by checking if a Platform with this title already exists
     const existingPlatform = await Platform.findOne({ title: req.file.originalname });
     if (existingPlatform) {
-      return res.status(400).json({ error: "This document has already been analyzed and is in the Community Library." });
+      return res.status(400).json({ error: "This document has already been analyzed and is in the Library." });
     }
+
+    // Save the PDF file locally
+    const safeFilename = req.file.originalname.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+    const pdfFilename = Date.now() + '-' + safeFilename;
+    const pdfPath = path.join(uploadsDir, pdfFilename);
+    fs.writeFileSync(pdfPath, req.file.buffer);
+    const pdfUrl = `http://localhost:3000/uploads/${pdfFilename}`;
 
     // 1. Extract text from PDF
     const parser = new PDFParse({ data: req.file.buffer });
@@ -293,7 +306,8 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
             ai_reasoning: "Updated via latest file (" + req.file.originalname + "): " + c.verdict,
             status: c.status || "In Progress",
             progress: c.progress || 50,
-            completion_percentage: c.progress || 50
+            completion_percentage: c.progress || 50,
+            pdfUrl: pdfUrl
           }
         }, { new: true });
 
@@ -307,7 +321,8 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
             progress: updated.progress || updated.completion_percentage,
             reasoning: updated.rationale || updated.ai_reasoning,
             isNew: false,
-            sources: updated.sources || updated.evidence_links || []
+            sources: updated.sources || updated.evidence_links || [],
+            pdfUrl: updated.pdfUrl
           });
           continue;
         }
@@ -325,7 +340,8 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
         status: c.status !== undefined ? c.status : "Pending",
         progress: c.progress !== undefined ? c.progress : 0,
         completion_percentage: c.progress !== undefined ? c.progress : 0,
-        sources: ["PDF Extraction"]
+        sources: ["PDF Extraction"],
+        pdfUrl: pdfUrl
       });
 
       formattedResults.push({
@@ -337,7 +353,8 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
         progress: newPromise.progress,
         reasoning: newPromise.rationale,
         isNew: true,
-        sources: newPromise.sources || newPromise.evidence_links || []
+        sources: newPromise.sources || newPromise.evidence_links || [],
+        pdfUrl: newPromise.pdfUrl
       });
     }
 

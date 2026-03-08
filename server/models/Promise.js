@@ -9,6 +9,7 @@ const PromiseSchema = new mongoose.Schema({
     topic: String,
     ai_reasoning: String,
     sources: [String],
+    pdfUrl: String, // Keep track of local PDF for "PDF Extraction"
     createdAt: { type: Date, default: Date.now },
     last_updated: Date
 });

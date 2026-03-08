@@ -59,6 +59,7 @@ export default function PromiseDatabase({ onViewChange }) {
           completion_percentage: p.completion_percentage || p.progress || 0,
           ai_reasoning: p.ai_reasoning || p.rationale || "",
           sources: p.sources || p.evidence_links || [],
+          pdfUrl: p.pdfUrl,
         };
       });
       setPromises(allPromises);
