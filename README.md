@@ -49,3 +49,80 @@ Pledgely uses AI to scrape, analyze, and audit political promises made by Canadi
 ```bash
 git clone https://github.com/Sarah06102/Pledgely.git
 cd Pledgely
+
+### 2. Install dependencies
+
+Install backend dependencies:
+
+```bash
+npm install
+```
+
+Install frontend dependencies:
+
+```bash
+cd client
+npm install
+```
+
+### 3. Create a `.env` file in server
+
+Add the following environment variables:
+
+```
+MONGO_URI=your_mongodb_connection_string
+BACKBOARD_API_KEY=your_backboard_api_key
+GNEWS_API_KEY=your_gnews_api_key
+NEWS_API_KEY=your_news_api_key
+GEMINI_API_KEY=your_gemini_api_key
+REACT_APP_AUTH0_DOMAIN=your_auth0_domain
+REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
+```
+
+### 3. Create a `.env` file in client
+
+Add the following environment variables:
+
+```
+REACT_APP_AUTH0_DOMAIN=your_auth0_domain
+REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
+```
+
+### 4. Seed the database
+
+Run this command initally: 
+```
+node seed.js
+```
+
+Run these commands next to get AI-audited promises and data from the web:
+```
+node seedDocuments.js
+node seedFromWeb.js
+```
+
+### 5. Start the backend
+
+```
+cd server
+node server.js
+```
+
+### 6. Start the frontend
+
+```
+cd client
+npm start
+```
+
+The app will run locally at:
+
+```
+http://localhost:3001
+```
+
+---
+
+## 📜 License
+
+MIT License
