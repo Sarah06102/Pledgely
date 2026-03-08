@@ -14,6 +14,8 @@ async function seedDocuments() {
 
     // Write results back to MongoDB
     for (const result of results) {
+        const existingPromise = promises.find(p => p._id.toString() === result.promise_id.toString());
+
         await db.collection("promises").updateOne(
             { _id: result.promise_id },
             {
@@ -21,7 +23,7 @@ async function seedDocuments() {
                     status: result.status,
                     completion_percentage: result.completion_percentage,
                     ai_reasoning: result.ai_reasoning,
-                    sources: result.sources || [],
+                    sources: result.sources || existingPromise.sources || [],
                     last_updated: new Date()
                 }
             }

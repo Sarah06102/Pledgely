@@ -50,8 +50,8 @@ export default function VideoUpload() {
     } catch (err) {
       setError(
         err.response?.data?.error ||
-          err.message ||
-          "Upload or analysis failed. Ensure the backend has the /upload/analyze endpoint."
+        err.message ||
+        "Upload or analysis failed. Ensure the backend has the /upload/analyze endpoint."
       );
     } finally {
       setUploading(false);
@@ -120,7 +120,7 @@ export default function VideoUpload() {
           </label>
           <input
             type="text"
-            placeholder="e.g. Justin Trudeau"
+            placeholder="e.g. Mark Carney"
             value={politicianId}
             onChange={(e) => setPoliticianId(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
