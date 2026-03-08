@@ -4,7 +4,7 @@ import LogoutButton from "./LogoutButton";
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: "📊" },
   { id: "promises", label: "Promise Database", icon: "📋" },
-  { id: "upload", label: "Upload & Analyze", icon: "🎬" },
+  { id: "audit", label: "AI Auditor", icon: "📄" },
   { id: "compare", label: "Compare", icon: "⚖️" },
 ];
 
