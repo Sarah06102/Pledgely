@@ -5,7 +5,26 @@ import SearchFilters from "./SearchFilters";
 
 const API_BASE = "http://localhost:3000";
 
-const POLITICIANS = ["carney", "poilievre", "singh"];
+const POLITICIAN_NAMES = {
+  carney: "Mark Carney",
+  poilievre: "Pierre Poilievre",
+  singh: "Jagmeet Singh",
+  may: "Elizabeth May",
+  blanchet: "Yves-François Blanchet",
+};
+
+const POLITICIAN_PARTIES = {
+  "Mark Carney": "Liberal Party",
+  "Pierre Poilievre": "Conservative Party",
+  "Jagmeet Singh": "New Democratic Party",
+  "Elizabeth May": "Green Party",
+  "Yves-François Blanchet": "Bloc Québécois",
+};
+
+function capitalizeWords(str) {
+  if (!str || typeof str !== "string") return str;
+  return str.trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
 
 export default function PromiseDatabase({ onViewChange }) {
   const [promises, setPromises] = useState([]);
@@ -20,18 +39,18 @@ export default function PromiseDatabase({ onViewChange }) {
       axios.get(`${API_BASE}/promises`).then((res) => res.data).catch(() => []),
     ]).then(([partiesData, promisesData]) => {
       setParties(partiesData);
-      // Normalize MongoDB fields to match what PromiseCard expects
       const allPromises = promisesData.map((p) => {
-        let name = p.politicianId || p.politician;
-        if (name === "carney") name = "Mark Carney";
-        else if (name === "poilievre") name = "Pierre Poilievre";
-        else if (name === "singh") name = "Jagmeet Singh";
+        const rawId = p.politicianId || p.politician;
+        const name = POLITICIAN_NAMES[rawId] || capitalizeWords(rawId) || "Unknown Politician";
+        const party = p.party && p.party.trim() !== ""
+          ? capitalizeWords(p.party)
+          : (POLITICIAN_PARTIES[name] || "Other Party");
 
         return {
           id: p.id || p._id,
           promise: p.promise || p.text || p.original_quote,
           politician: name,
-          party: p.party || "",
+          party,
           topic: p.topic || "Other",
           status: p.status || "Pending",
           completion_percentage: p.completion_percentage || p.progress || 0,
@@ -51,11 +70,7 @@ export default function PromiseDatabase({ onViewChange }) {
     // 2. Topic Filter
     if (filters.topic && filters.topic !== "All Topics" && p.topic !== filters.topic) return false;
     // 3. Party Filter
-    const derivedParty = p.politician === "Mark Carney" || p.politician === "carney" ? "Liberal Party"
-      : p.politician === "Pierre Poilievre" || p.politician === "poilievre" ? "Conservative Party"
-        : p.politician === "Jagmeet Singh" || p.politician === "singh" ? "New Democratic Party"
-          : p.politician === "Elizabeth May" || p.politician === "may" ? "Green Party"
-            : p.politician === "Yves-François Blanchet" || p.politician === "blanchet" ? "Bloc Québécois" : "Other";
+    const derivedParty = POLITICIAN_PARTIES[p.politician] || p.party || "Other Party";
 
     if (filters.party && filters.party !== "All Parties") {
       const fp = filters.party.toLowerCase();
