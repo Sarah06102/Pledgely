@@ -18,6 +18,11 @@ body {
   background: #f8fafc;
 }
 
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
 code {
   font-family: 'JetBrains Mono', source-code-pro, monospace;
 }

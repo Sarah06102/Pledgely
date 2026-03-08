@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Navbar from "./components/Navbar";
+import CursorEffect from "./components/CursorEffect";
 import Dashboard from "./components/Dashboard";
 import PromiseDatabase from "./components/PromiseDatabase";
 import Compare from "./components/Compare";
@@ -28,11 +29,17 @@ function App() {
   }
 
   if (!isAuthenticated) {
-    return <LandingPage />;
+    return (
+      <>
+        <CursorEffect />
+        <LandingPage />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <CursorEffect />
       <Navbar activeView={activeView} onViewChange={setActiveView} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ViewComponent onViewChange={setActiveView} />
