@@ -30,7 +30,7 @@ function PreviewCard() {
       </div>
       {hovered && (
         <p className="mt-4 text-xs text-slate-500 animate-fade-in">
-          Construction data shows ~380k started. On track but behind pace.
+          "Efforts have been initiated to address housing shortages, with federal policies encouraging new construction and repair of existing homes. Despite these efforts, the pace has been slow, with significant challenges remaining in meeting the ambitious target of 1.4 million homes within the set timeframe."
         </p>
       )}
     </div>
