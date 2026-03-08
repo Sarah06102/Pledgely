@@ -50,7 +50,7 @@ export default function PromiseCard({ promise, onViewChange }) {
             {promise.promise || promise.original_quote || promise.text}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs text-slate-500">{promise.politician || promise.politicianId || "Politician"}</span>
+            <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{promise.politician || promise.politicianId || "Unknown Politician"}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs text-slate-500">{displayParty}</span>
             <span className="text-slate-300">•</span>
