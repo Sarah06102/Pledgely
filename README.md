@@ -53,7 +53,9 @@ Pledgely automatically tracks and audits Canadian political promises using AI. H
 
 7. **Frontend Display**  
    - The React frontend fetches all promise data from MongoDB live.  
-   - Users can browse promises by **politician, party, topic, or status**, and compare leaders side by side.  
+   - Users can browse promises by **politician, party, topic, or status**, and compare leaders side by side.
+  
+---
 
 ## 🛠️ Tech Stack
 
