@@ -26,7 +26,7 @@ export default function Compare() {
         <select
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          className="w-full max-w-xs px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+          className="w-full max-w-xs px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
         >
           {TOPICS.map((t) => (
             <option key={t} value={t}>
@@ -57,7 +57,7 @@ export default function Compare() {
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${
                       row.status === "In Progress"
-                        ? "bg-blue-100 text-blue-800"
+                        ? "bg-pink-100 text-pink-800"
                         : row.status === "Pending"
                         ? "bg-amber-100 text-amber-800"
                         : "bg-slate-100 text-slate-700"
@@ -70,7 +70,7 @@ export default function Compare() {
                   <div className="flex items-center gap-2">
                     <div className="flex-1 h-2 bg-slate-100 rounded-full max-w-[120px] overflow-hidden">
                       <div
-                        className="h-full bg-blue-500 rounded-full"
+                        className="h-full bg-pink-500 rounded-full"
                         style={{ width: `${row.progress}%` }}
                       />
                     </div>
