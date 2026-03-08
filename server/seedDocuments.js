@@ -5,7 +5,8 @@ const { verifyPromises } = require("./services/backboard");
 async function seedDocuments() {
     const client = new MongoClient(process.env.MONGO_URI);
     await client.connect();
-    const db = client.db("promiseTracker");
+    // Use the default DB from the connection string
+    const db = client.db();
 
     const promises = await db.collection("promises").find().toArray();
     console.log(`Found ${promises.length} promises to audit`);

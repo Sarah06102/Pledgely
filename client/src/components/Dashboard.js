@@ -15,14 +15,14 @@ function MiniBarChart({ data, color = "pink" }) {
   };
 
   return (
-    <div className="flex items-end gap-2 h-24">
+    <div className="flex items-end gap-2 h-40 pt-4">
       {data.map((d, i) => (
-        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+        <div key={i} className="flex-1 flex flex-col justify-end items-center gap-1 h-full">
           <div
-            className={`w-full rounded-t ${colorMap[color] || colorMap.pink}`}
+            className={`w-full rounded-t ${colorMap[color] || colorMap.pink} transition-all duration-500`}
             style={{ height: `${(d.value / max) * 100}%`, minHeight: d.value > 0 ? 4 : 0 }}
           />
-          <span className="text-[10px] text-slate-500 truncate w-full text-center">{d.label}</span>
+          <span className="text-[10px] text-slate-500 truncate w-full text-center" title={d.label}>{d.label}</span>
         </div>
       ))}
     </div>
@@ -37,9 +37,9 @@ const STATUS_COLORS = {
   "Partially Completed": "text-orange-500",
 };
 
-export default function Dashboard() {
+export default function Dashboard({ onViewChange }) {
   const [promises, setPromises] = useState([]);
-  const [politicians] = useState(["carney", "poilievre", "singh"]);
+  const [politicians] = useState(["carney", "poilievre", "singh", "blanchet", "may"]);
 
   const fetchPromises = () => {
     return Promise.all(
@@ -81,23 +81,23 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div className="bg-indigo-600 rounded-2xl p-8 md:p-12 text-white shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-br from-pink-600 to-rose-500 rounded-2xl p-8 md:p-12 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-3xl md:text-5xl font-bold mb-4">Welcome to Pledgely</h1>
-          <p className="text-indigo-100 text-lg md:text-xl mb-8">
+          <p className="text-pink-100 text-lg md:text-xl mb-8">
             The AI-powered political promise tracker. We use advanced language models to evaluate statements, track legislation, and hold politicians accountable to their word.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="/database" // Assuming they use routing or this is just a mockup
-              className="bg-indigo-500 hover:bg-indigo-400 border border-indigo-400 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+            <button
+              onClick={() => onViewChange && onViewChange("promises")}
+              className="bg-white text-pink-600 hover:bg-slate-50 font-semibold px-6 py-3 rounded-xl shadow-sm transition-colors flex items-center gap-2"
             >
-              Browse Database →
-            </a>
+              See the Promises →
+            </button>
           </div>
         </div>
         {/* Decorative background element */}
-        <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-indigo-500 to-transparent opacity-50 blur-3xl transform translate-x-1/4 -translate-y-1/4 rounded-full pointer-events-none"></div>
+        <div className="absolute right-0 top-0 w-1/2 h-full bg-white opacity-10 blur-3xl transform translate-x-1/4 -translate-y-1/4 rounded-full pointer-events-none"></div>
       </div>
 
       {/* Real stats */}

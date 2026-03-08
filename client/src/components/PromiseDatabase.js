@@ -5,7 +5,7 @@ import SearchFilters from "./SearchFilters";
 
 const API_BASE = "http://localhost:3000";
 
-const POLITICIANS = ["carney", "poilievre", "singh"];
+const POLITICIANS = ["carney", "poilievre", "singh", "blanchet", "may"];
 
 export default function PromiseDatabase() {
   const [promises, setPromises] = useState([]);
@@ -28,6 +28,8 @@ export default function PromiseDatabase() {
         if (name === "carney") name = "Mark Carney";
         else if (name === "poilievre") name = "Pierre Poilievre";
         else if (name === "singh") name = "Jagmeet Singh";
+        else if (name === "blanchet") name = "Yves-François Blanchet";
+        else if (name === "may") name = "Elizabeth May";
 
         return {
           id: p._id,
@@ -56,7 +58,9 @@ export default function PromiseDatabase() {
     // 3. Party Filter
     const derivedParty = p.politician === "Mark Carney" || p.politician === "carney" ? "Liberal Party"
       : p.politician === "Pierre Poilievre" || p.politician === "poilievre" ? "Conservative Party"
-        : p.politician === "Jagmeet Singh" || p.politician === "singh" ? "New Democratic Party" : "Other";
+        : p.politician === "Jagmeet Singh" || p.politician === "singh" ? "New Democratic Party"
+          : p.politician === "Elizabeth May" || p.politician === "may" ? "Green Party"
+            : p.politician === "Yves-François Blanchet" || p.politician === "blanchet" ? "Bloc Québécois" : "Other";
 
     if (filters.party && filters.party !== "All Parties") {
       const fp = filters.party.toLowerCase();
@@ -66,6 +70,8 @@ export default function PromiseDatabase() {
       if (fp.includes("liberal") && dp.includes("liberal")) isMatch = true;
       if (fp.includes("conservative") && dp.includes("conservative")) isMatch = true;
       if ((fp.includes("ndp") || fp.includes("democratic")) && dp.includes("democratic")) isMatch = true;
+      if (fp.includes("green") && dp.includes("green")) isMatch = true;
+      if (fp.includes("bloc") && dp.includes("bloc")) isMatch = true;
 
       if (!isMatch) return false;
     }
