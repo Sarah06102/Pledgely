@@ -9,9 +9,10 @@ async function seed() {
     // Use the default DB from the connection string or fallback to "test"
     const db = client.db();
 
-    await db.collection("parties").deleteMany({});
-    await db.collection("politicians").deleteMany({});
-    await db.collection("promises").deleteMany({});
+    // Disabling intentional database wipes to protect the AI-audited, live data.
+    // await db.collection("parties").deleteMany({});
+    // await db.collection("politicians").deleteMany({});
+    // await db.collection("promises").deleteMany({});
 
     await db.collection("parties").insertMany([
       { _id: "liberal", name: "Liberal Party", country: "Canada" },
