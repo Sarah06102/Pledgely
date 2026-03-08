@@ -116,14 +116,8 @@ REACT_APP_AUTH0_CLIENT_ID=your_auth0_client_id
 
 ### 4. Seed the database
 
-Run this command initally: 
+Run this commands next to get AI-audited promises and data from the web:
 ```
-node seed.js
-```
-
-Run these commands next to get AI-audited promises and data from the web:
-```
-node seedDocuments.js
 node seedFromWeb.js
 ```
 
