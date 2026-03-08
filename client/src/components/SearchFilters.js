@@ -33,7 +33,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && applyFilters()}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           />
         </div>
         <div>
@@ -41,7 +41,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
           <select
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           >
             {TOPICS.map((t) => (
               <option key={t} value={t}>
@@ -55,7 +55,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -69,7 +69,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
           <select
             value={party}
             onChange={(e) => setParty(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           >
             {(parties.length > 0 ? ["All Parties", ...parties.map(p => p.name)] : PARTIES).map((p, i) => (
               <option key={i} value={p}>
@@ -82,7 +82,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
       <div className="flex gap-2 mt-3">
         <button
           onClick={applyFilters}
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 rounded-lg bg-pink-600 text-white text-sm font-medium hover:bg-pink-700 transition-colors"
         >
           Apply Filters
         </button>

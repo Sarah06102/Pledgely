@@ -76,8 +76,9 @@ export default function VideoUpload() {
 
       <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm max-w-2xl">
         <div
-          className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${file ? "border-blue-300 bg-blue-50/50" : "border-slate-200 hover:border-slate-300"
-            }`}
+          className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
+            file ? "border-pink-300 bg-pink-50/50" : "border-slate-200 hover:border-slate-300"
+          }`}
         >
           <input
             ref={fileInputRef}
@@ -122,7 +123,7 @@ export default function VideoUpload() {
             placeholder="e.g. Mark Carney"
             value={politicianId}
             onChange={(e) => setPoliticianId(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           />
         </div>
 
@@ -134,7 +135,7 @@ export default function VideoUpload() {
           <button
             onClick={handleUpload}
             disabled={!file || uploading || analyzing}
-            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-5 py-2.5 rounded-lg bg-pink-600 text-white font-medium hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {uploading || analyzing ? "Processing…" : "Upload & Analyze"}
           </button>

@@ -147,7 +147,7 @@ export default function Compare() {
           <select
             value={polA}
             onChange={(e) => setPolA(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 outline-none"
           >
             <option value="Mark Carney">Mark Carney (LPC)</option>
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
@@ -162,7 +162,7 @@ export default function Compare() {
           <select
             value={polB}
             onChange={(e) => setPolB(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 outline-none"
           >
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
             <option value="Mark Carney">Mark Carney (LPC)</option>
@@ -175,7 +175,7 @@ export default function Compare() {
           <select
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-blue-700 bg-blue-50"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 outline-none font-semibold text-pink-700 bg-pink-50"
           >
             {TOPICS.map((t) => (
               <option key={t} value={t}>{t}</option>

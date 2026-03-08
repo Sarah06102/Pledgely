@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const statusColors = {
   Fulfilled: "bg-emerald-100 text-emerald-800",
-  "In Progress": "bg-blue-100 text-blue-800",
+  "In Progress": "bg-pink-100 text-pink-800",
   Pending: "bg-amber-100 text-amber-800",
   Broken: "bg-rose-100 text-rose-800",
   Delayed: "bg-orange-100 text-orange-800",
@@ -51,7 +51,7 @@ export default function PromiseCard({ promise }) {
         </div>
         <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-pink-500 to-rose-500 transition-all duration-500"
             style={{ width: `${Math.min(progress, 100)}%` }}
           />
         </div>
@@ -74,7 +74,7 @@ export default function PromiseCard({ promise }) {
         </div>
       )}
 
-      {/* ✅ Sources */}
+      {/* Sources */}
       <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
         {sources.length > 0 ? (
           sources.map((url, i) => (
@@ -83,7 +83,7 @@ export default function PromiseCard({ promise }) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+              className="text-xs text-pink-600 hover:text-pink-700 font-medium"
             >
               Source {i + 1} →
             </a>
