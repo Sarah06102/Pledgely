@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const backboardService = require("./services/backboard");
 
+const Party = require("./models/Party");
+const Politician = require("./models/Politician");
+const PromiseModel = require("./models/Promise");
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -14,28 +18,33 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.error("❌ MongoDB error:", err));
 
 // GET all parties
-app.get("/parties", (req, res) => {
-  res.json([
-    { id: 1, name: "Liberal Party" },
-    { id: 2, name: "Conservative Party" },
-    { id: 3, name: "NDP" }
-  ]);
+app.get("/parties", async (req, res) => {
+  try {
+    const parties = await Party.find();
+    res.json(parties.map(p => ({ id: p._id, name: p.name })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET politicians by party
-app.get("/politicians/:partyId", (req, res) => {
-  res.json([
-    { id: 1, name: "Justin Trudeau", partyId: req.params.partyId },
-    { id: 2, name: "Mark Carney", partyId: req.params.partyId }
-  ]);
+app.get("/politicians/:partyId", async (req, res) => {
+  try {
+    const politicians = await Politician.find({ partyId: req.params.partyId });
+    res.json(politicians.map(p => ({ id: p._id, name: p.name, partyId: p.partyId })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET promises by politician
-app.get("/promises/:politicianId", (req, res) => {
-  res.json([
-    { id: 1, promise: "Build 10,000 affordable homes", status: "Pending" },
-    { id: 2, promise: "Cut income taxes by 10%", status: "Pending" }
-  ]);
+app.get("/promises/:politicianId", async (req, res) => {
+  try {
+    const promises = await PromiseModel.find({ politicianId: req.params.politicianId });
+    res.json(promises);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Update a promise
@@ -46,13 +55,39 @@ app.put("/promises/:id", (req, res) => {
 // POST /ai-audit/:politicianId
 app.post("/ai-audit/:politicianId", async (req, res) => {
   try {
-    console.log(`🔄 Running audit for politician: ${req.params.politicianId}`);
-    const promises = [
-      { _id: "1", original_quote: "Build 10,000 affordable homes by 2025" },
-      { _id: "2", original_quote: "Cut income taxes by 10% in first year" }
-    ];
-    const results = await backboardService.verifyPromises(promises);
-    res.json({ success: true, results });
+    const politicianId = req.params.politicianId;
+    console.log(`🔄 Running audit for politician: ${politicianId}`);
+
+    // Fetch real promises from DB
+    const promises = await PromiseModel.find({ politicianId });
+    if (promises.length === 0) {
+      return res.status(404).json({ error: "No promises found for this politician." });
+    }
+
+    // Map schema to what verifyPromises expects (handling both 'text' and 'original_quote')
+    const mappedPromises = promises.map(p => ({
+      _id: p._id,
+      original_quote: p.text
+    }));
+
+    const results = await backboardService.verifyPromises(mappedPromises);
+
+    // Save results back to DB
+    for (const result of results) {
+      const existingPromise = promises.find(p => p._id.toString() === result.promise_id.toString());
+
+      await PromiseModel.findByIdAndUpdate(result.promise_id, {
+        status: result.status,
+        completion_percentage: result.completion_percentage,
+        ai_reasoning: result.rationale || result.ai_reasoning,
+        sources: result.sources || existingPromise.sources || [],
+        last_updated: new Date()
+      });
+    }
+
+    // Return the updated promises
+    const updatedPromises = await PromiseModel.find({ politicianId });
+    res.json({ success: true, results: updatedPromises });
   } catch (err) {
     console.error("❌ Audit error:", err.message);
     res.status(500).json({ error: err.message });

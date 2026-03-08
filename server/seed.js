@@ -36,8 +36,8 @@ async function seed() {
     // Insert politicians
     await db.collection("politicians").insertMany([
       {
-        _id: "trudeau",
-        name: "Justin Trudeau",
+        _id: "carney",
+        name: "Mark Carney",
         partyId: "liberal",
         position: "Prime Minister"
       },
@@ -59,7 +59,7 @@ async function seed() {
     await db.collection("promises").insertMany([
       {
         text: "Build 1.4M homes by 2030",
-        politicianId: "trudeau",
+        politicianId: "carney",
         status: "in-progress",
         progress: 27,
         topic: "Housing",
