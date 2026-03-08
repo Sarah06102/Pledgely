@@ -24,8 +24,8 @@ app.use("/uploads", express.static(uploadsDir));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
 // GET all parties
 // GET all parties
@@ -136,7 +136,7 @@ app.put("/promises/:id", async (req, res) => {
 app.post("/ai-audit/:politicianId", async (req, res) => {
   try {
     const politicianId = req.params.politicianId;
-    console.log(`🔄 Running audit for politician: ${politicianId}`);
+    console.log(`Running audit for politician: ${politicianId}`);
 
     // Fetch real promises from DB
     const promises = await PromiseModel.find({ politicianId });
@@ -169,7 +169,7 @@ app.post("/ai-audit/:politicianId", async (req, res) => {
     const updatedPromises = await PromiseModel.find({ politicianId });
     res.json({ success: true, results: updatedPromises });
   } catch (err) {
-    console.error("❌ Audit error:", err.message);
+    console.error("Audit error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
@@ -374,4 +374,4 @@ app.post("/upload/analyze", upload.single("auditPdf"), async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("🚀 Server running on port 3000"));
+app.listen(3000, () => console.log("Server running on port 3000"));

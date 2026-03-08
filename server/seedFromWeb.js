@@ -27,8 +27,7 @@ async function backboardRequest(endpoint, method = "GET", body = null) {
 }
 
 /**
- * Uses a dedicated Backboard.io Assistant to parse a giant wall of raw text
- * and extract all concrete political promises into JSON.
+ * Uses a dedicated Backboard.io Assistant to parse raw test and extract all concrete political promises into JSON.
  */
 async function extractPromisesWithBackboard(rawText, politicianId, sourceUrl) {
     console.log(`\n🤖 Sending text to Backboard for Promise Extraction...`);
@@ -88,11 +87,8 @@ async function extractPromisesWithBackboard(rawText, politicianId, sourceUrl) {
 async function runSeed() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("✅ Connected to MongoDB");
+        console.log("Connected to MongoDB");
 
-        // The web scraper is getting blocked by 404s/Timeouts on reputable journalistic sites (CBC, GlobalNews).
-        // Instead, we will feed the Backboard extraction pipeline with raw text compilations of their platforms 
-        // compiled from multiple highly-reputable sources (Macleans, CTV, Global).
 
         const platformTexts = [
             {
@@ -135,9 +131,9 @@ async function runSeed() {
 
                 if (newPromises.length > 0) {
                     const inserted = await PromiseModel.insertMany(newPromises);
-                    console.log(`🎉 Success! Saved ${inserted.length} reliable promises into MongoDB for ${data.politicianId}.`);
+                    console.log(`Success! Saved ${inserted.length} reliable promises into MongoDB for ${data.politicianId}.`);
 
-                    console.log(`🤖 Automatically running AI Audit on ${data.politicianId}'s promises...`);
+                    console.log(`Automatically running AI Audit on ${data.politicianId}'s promises...`);
                     const mappedPromises = inserted.map(p => ({
                         _id: p._id,
                         original_quote: p.text
@@ -159,10 +155,7 @@ async function runSeed() {
                         const topicKeyword = result.topic || existingPromise.topic || "Platform";
                         const searchQuery = `"${politicianName}" ${topicKeyword} Canada`;
 
-                        // 🚨 HACKATHON RATE-LIMIT BYPASS 🚨
-                        // If GNews and NewsAPI both fail due to free-tier rate limits, 
-                        // we dynamically generate a literal HTML link to a Google News Search!
-                        // This guarantees the UI buttons always lead to real news articles.
+
                         const googleNewsQuery = `${politicianName} ${topicKeyword} Canada`;
                         let finalSourceUrl = `https://news.google.com/search?q=${encodeURIComponent(googleNewsQuery)}&hl=en-CA&gl=CA&ceid=CA%3Aen`;
 
@@ -178,7 +171,7 @@ async function runSeed() {
                                 const gnewsData = await gnewsRes.json();
                                 if (gnewsData.articles && gnewsData.articles.length > 0) {
                                     finalSourceUrl = gnewsData.articles[0].url;
-                                    console.log(`✅ [GNews] Verified article: ${finalSourceUrl}`);
+                                    console.log(`[GNews] Verified article: ${finalSourceUrl}`);
                                 } else {
                                     throw new Error("GNews found 0 articles");
                                 }
@@ -198,15 +191,15 @@ async function runSeed() {
                                     const newsData = await newsRes.json();
                                     if (newsData.articles && newsData.articles.length > 0) {
                                         finalSourceUrl = newsData.articles[0].url;
-                                        console.log(`✅ [NewsAPI] Verified article: ${finalSourceUrl}`);
+                                        console.log(`[NewsAPI] Verified article: ${finalSourceUrl}`);
                                     } else {
-                                        console.log(`⚠️ No articles found on fallback. Using Google News Search Bypass.`);
+                                        console.log(`No articles found on fallback. Using Google News Search Bypass.`);
                                     }
                                 } else {
-                                    console.log(`❌ NewsAPI Rate Limited (${newsRes.status}). Using Google News Search Bypass.`);
+                                    console.log(`NewsAPI Rate Limited (${newsRes.status}). Using Google News Search Bypass.`);
                                 }
                             } catch (fallbackErr) {
-                                console.error("❌ Both APIs failed. Using Google News Search Bypass.", fallbackErr.message);
+                                console.error("Both APIs failed. Using Google News Search Bypass.", fallbackErr.message);
                             }
                         }
 
@@ -218,17 +211,17 @@ async function runSeed() {
                             last_updated: new Date()
                         });
                     }
-                    console.log(`✅ Successfully completed end-to-end AI Audit pipeline for ${data.politicianId}!`);
+                    console.log(`Successfully completed end-to-end AI Audit pipeline for ${data.politicianId}!`);
                 } else {
-                    console.log(`⚠️ No promises were extracted for ${data.politicianId}.`);
+                    console.log(`No promises were extracted for ${data.politicianId}.`);
                 }
             } catch (err) {
-                console.error(`❌ Failed processing ${data.politicianId}:`, err.message);
+                console.error(`Failed processing ${data.politicianId}:`, err.message);
             }
         }
 
     } catch (err) {
-        console.error("❌ Seeding Error:", err.message);
+        console.error("Seeding Error:", err.message);
     } finally {
         mongoose.connection.close();
         process.exit(0);

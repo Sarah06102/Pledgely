@@ -160,7 +160,6 @@ export default function Dashboard({ onViewChange }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <span>📚</span>
               <span>Library</span>
             </h3>
             <p className="text-slate-500 text-sm mt-1">

@@ -62,9 +62,9 @@ async function seed() {
       { text: "Strengthen Bill 101 protections federally", politicianId: "blanchet", status: "Pending", progress: 0, topic: "Education", createdAt: new Date() },
     ]);
 
-    console.log("✅ Seed data inserted successfully");
+    console.log("Seed data inserted successfully");
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
+    console.error("Error seeding database:", error);
   } finally {
     await client.close();
   }

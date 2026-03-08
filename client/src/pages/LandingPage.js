@@ -125,7 +125,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: "Promise Database", desc: "Browse promises by politician, party, and topic. See status and progress in real time.", accent: "bg-pink-500" },
-              { title: "AI Fact-Checks", desc: "Upload speeches. AI extracts claims, matches to promises, and verifies against evidence.", accent: "bg-rose-500" },
+              { title: "AI Fact-Checks", desc: "Upload your own articles. Gemini extracts claims and matches them to promises, to update progress.", accent: "bg-rose-500" },
               { title: "Compare", desc: "Compare promise fulfillment across politicians on the same topic.", accent: "bg-pink-400" },
             ].map((item, i) => (
               <div

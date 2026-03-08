@@ -5,7 +5,7 @@ const PromiseModel = require("./models/Promise");
 async function fixTopics() {
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("✅ Connected to MongoDB");
+        console.log("Connected to MongoDB");
 
         // 1. Fix "Environment" to "Climate"
         const envUpdate = await PromiseModel.updateMany(
@@ -20,12 +20,12 @@ async function fixTopics() {
             { topic: "Other" },
             { $set: { topic: "Economy" } } // Defaulting Bloc's systemic demands to Economy
         );
-        console.log(`📊 Converted ${otherUpdate.modifiedCount} 'Other' promises to 'Economy'.`);
+        console.log(`Converted ${otherUpdate.modifiedCount} 'Other' promises to 'Economy'.`);
 
-        console.log("✅ Database successfully patched!");
+        console.log("Database successfully patched!");
         process.exit(0);
     } catch (err) {
-        console.error("❌ Error patching database:", err);
+        console.error("Error patching database:", err);
         process.exit(1);
     }
 }
