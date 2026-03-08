@@ -11,9 +11,14 @@ const POLITICIAN_NAMES = {
   carney: "Mark Carney",
   poilievre: "Pierre Poilievre",
   singh: "Jagmeet Singh",
-  blanchet: "Yves-François Blanchet",
+  blanchet: "Yves-Fran?ois Blanchet",
   may: "Elizabeth May",
 };
+
+function capitalizeWords(str) {
+  if (!str || typeof str !== "string") return str;
+  return str.trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
 
 export default function Compare({ onViewChange }) {
   const [topic, setTopic] = useState("Housing");
@@ -32,7 +37,7 @@ export default function Compare({ onViewChange }) {
       const allPromises = promiseArrays.flat().map((p) => ({
         id: p._id,
         promise: p.text || p.promise,
-        politician: POLITICIAN_NAMES[p.politicianId] || p.politicianId,
+        politician: POLITICIAN_NAMES[p.politicianId] || capitalizeWords(p.politicianId) || "Unknown Politician",
         topic: p.topic || "Other",
         status: p.status || "Pending",
         completion_percentage: p.completion_percentage || 0,
@@ -72,7 +77,7 @@ export default function Compare({ onViewChange }) {
         >
           <td className="px-6 py-4 text-sm font-medium text-slate-900">
             <div className="flex items-center gap-2">
-              <span className={`transform transition-transform ${isExpanded ? "rotate-90" : ""}`}>▶</span>
+              <span className={`transform transition-transform ${isExpanded ? "rotate-90" : ""}`}>���</span>
               {name}
             </div>
           </td>
@@ -139,7 +144,7 @@ export default function Compare({ onViewChange }) {
             <option value="Mark Carney">Mark Carney (LPC)</option>
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
             <option value="Jagmeet Singh">Jagmeet Singh (NDP)</option>
-            <option value="Yves-François Blanchet">Yves-François Blanchet (BQ)</option>
+            <option value="Yves-Fran?ois Blanchet">Yves-Fran?ois Blanchet (BQ)</option>
             <option value="Elizabeth May">Elizabeth May (Green)</option>
           </select>
         </div>
@@ -156,7 +161,7 @@ export default function Compare({ onViewChange }) {
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
             <option value="Mark Carney">Mark Carney (LPC)</option>
             <option value="Jagmeet Singh">Jagmeet Singh (NDP)</option>
-            <option value="Yves-François Blanchet">Yves-François Blanchet (BQ)</option>
+            <option value="Yves-Fran?ois Blanchet">Yves-Fran?ois Blanchet (BQ)</option>
             <option value="Elizabeth May">Elizabeth May (Green)</option>
           </select>
         </div>

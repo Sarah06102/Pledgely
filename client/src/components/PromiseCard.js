@@ -9,6 +9,27 @@ const statusColors = {
   "Partially Completed": "bg-orange-100 text-orange-800",
 };
 
+function capitalizeWords(str) {
+  if (!str || typeof str !== "string") return str;
+  return str.trim().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
+
+const POLITICIAN_DISPLAY_NAMES = {
+  carney: "Mark Carney",
+  poilievre: "Pierre Poilievre",
+  singh: "Jagmeet Singh",
+  may: "Elizabeth May",
+  blanchet: "Yves-François Blanchet",
+};
+
+const POLITICIAN_PARTIES = {
+  "Mark Carney": "Liberal Party",
+  "Pierre Poilievre": "Conservative Party",
+  "Jagmeet Singh": "New Democratic Party",
+  "Elizabeth May": "Green Party",
+  "Yves-François Blanchet": "Bloc Québécois",
+};
+
 export default function PromiseCard({ promise, onViewChange }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const statusClass = statusColors[promise.status] || "bg-slate-100 text-slate-700";
@@ -23,24 +44,12 @@ export default function PromiseCard({ promise, onViewChange }) {
     sources = [sources];
   }
 
-  // Name mapping
-  let displayName = promise.politician || promise.politicianId || "Unknown Politician";
-  if (displayName === "carney") displayName = "Mark Carney";
-  else if (displayName === "poilievre") displayName = "Pierre Poilievre";
-  else if (displayName === "singh") displayName = "Jagmeet Singh";
-  else if (displayName === "may") displayName = "Elizabeth May";
-  else if (displayName === "blanchet") displayName = "Yves-François Blanchet";
+  const rawPolitician = promise.politician || promise.politicianId || "";
+  const displayName = POLITICIAN_DISPLAY_NAMES[rawPolitician] || capitalizeWords(rawPolitician) || "Unknown Politician";
 
-  // Party mapping
-  let displayParty = promise.party;
-  if (!displayParty || displayParty === "Party" || displayParty === "") {
-    if (displayName === "Mark Carney") displayParty = "Liberal Party";
-    else if (displayName === "Pierre Poilievre") displayParty = "Conservative Party";
-    else if (displayName === "Jagmeet Singh") displayParty = "New Democratic Party";
-    else if (displayName === "Elizabeth May") displayParty = "Green Party";
-    else if (displayName === "Yves-François Blanchet") displayParty = "Bloc Québécois";
-    else displayParty = "Other Party";
-  }
+  let displayParty = promise.party && promise.party.trim() !== "" && promise.party !== "Party"
+    ? capitalizeWords(promise.party)
+    : POLITICIAN_PARTIES[displayName] || "Other Party";
 
   return (
     <article className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
@@ -50,7 +59,7 @@ export default function PromiseCard({ promise, onViewChange }) {
             {promise.promise || promise.original_quote || promise.text}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs text-slate-500">{promise.politician || promise.politicianId || "Politician"}</span>
+            <span className="text-xs text-slate-500">{displayName}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs text-slate-500">{displayParty}</span>
             <span className="text-slate-300">•</span>
