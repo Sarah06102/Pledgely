@@ -23,6 +23,25 @@ export default function PromiseCard({ promise, onViewChange }) {
     sources = [sources];
   }
 
+  // Name mapping
+  let displayName = promise.politician || promise.politicianId || "Unknown Politician";
+  if (displayName === "carney") displayName = "Mark Carney";
+  else if (displayName === "poilievre") displayName = "Pierre Poilievre";
+  else if (displayName === "singh") displayName = "Jagmeet Singh";
+  else if (displayName === "may") displayName = "Elizabeth May";
+  else if (displayName === "blanchet") displayName = "Yves-François Blanchet";
+
+  // Party mapping
+  let displayParty = promise.party;
+  if (!displayParty || displayParty === "Party" || displayParty === "") {
+    if (displayName === "Mark Carney") displayParty = "Liberal Party";
+    else if (displayName === "Pierre Poilievre") displayParty = "Conservative Party";
+    else if (displayName === "Jagmeet Singh") displayParty = "New Democratic Party";
+    else if (displayName === "Elizabeth May") displayParty = "Green Party";
+    else if (displayName === "Yves-François Blanchet") displayParty = "Bloc Québécois";
+    else displayParty = "Other Party";
+  }
+
   return (
     <article className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -31,9 +50,9 @@ export default function PromiseCard({ promise, onViewChange }) {
             {promise.promise || promise.original_quote || promise.text}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{promise.politician || promise.politicianId || "Unknown Politician"}</span>
+            <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">{displayName}</span>
             <span className="text-slate-300">•</span>
-            <span className="text-xs text-slate-500">{promise.party || "Party"}</span>
+            <span className="text-xs text-slate-500">{displayParty}</span>
             <span className="text-slate-300">•</span>
             <span className="text-xs font-medium text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">{promise.topic || "Policy"}</span>
           </div>
