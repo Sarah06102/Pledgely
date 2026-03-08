@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
-const TOPICS = ["All Topics", "Housing", "Climate", "Healthcare", "Economy", "Education", "Immigration"];
+const DEFAULT_TOPICS = ["Housing", "Climate", "Healthcare", "Economy", "Education", "Immigration"];
 const STATUSES = ["All Status", "In Progress", "Fulfilled", "Pending", "Broken", "Delayed"];
 const PARTIES = ["All Parties", "Liberal", "Conservative", "NDP", "Green", "Bloc"];
 
-export default function SearchFilters({ onFilterChange, parties = [], politicians = [] }) {
+export default function SearchFilters({ onFilterChange, parties = [], politicians = [], topics = [] }) {
+  const topicOptions = topics.length > 0 ? topics : DEFAULT_TOPICS;
   const [topic, setTopic] = useState("All Topics");
   const [status, setStatus] = useState("All Status");
   const [party, setParty] = useState("All Parties");
@@ -43,7 +44,7 @@ export default function SearchFilters({ onFilterChange, parties = [], politician
             onChange={(e) => setTopic(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none"
           >
-            {TOPICS.map((t) => (
+            {["All Topics", ...topicOptions].map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>

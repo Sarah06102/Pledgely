@@ -39,7 +39,7 @@ const STATUS_COLORS = {
 
 export default function Dashboard({ onViewChange }) {
   const [promises, setPromises] = useState([]);
-  const [politicians] = useState(["carney", "poilievre", "singh"]);
+  const [politicians] = useState(["carney", "poilievre", "singh", "may", "blanchet"]);
   const [, setParties] = useState([]); // Ignore unused parties var
   const [platforms, setPlatforms] = useState([]);
 

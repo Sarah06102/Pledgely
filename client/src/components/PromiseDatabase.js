@@ -29,16 +29,19 @@ function capitalizeWords(str) {
 export default function PromiseDatabase({ onViewChange }) {
   const [promises, setPromises] = useState([]);
   const [parties, setParties] = useState([]);
+  const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({});
 
   useEffect(() => {
-    // Fetch real promises from all politicians
+    // Fetch parties, promises, and topics (topics are dynamic from DB, including PDF-extracted ones)
     Promise.all([
       axios.get(`${API_BASE}/parties`).then((res) => res.data).catch(() => []),
       axios.get(`${API_BASE}/promises`).then((res) => res.data).catch(() => []),
-    ]).then(([partiesData, promisesData]) => {
+      axios.get(`${API_BASE}/topics`).then((res) => res.data).catch(() => []),
+    ]).then(([partiesData, promisesData, topicsData]) => {
       setParties(partiesData);
+      setTopics(topicsData);
       const allPromises = promisesData.map((p) => {
         const rawId = p.politicianId || p.politician;
         const name = POLITICIAN_NAMES[rawId] || capitalizeWords(rawId) || "Unknown Politician";
@@ -108,7 +111,7 @@ export default function PromiseDatabase({ onViewChange }) {
         <p className="text-slate-600 mt-1">Browse and filter political promises across parties and topics</p>
       </div>
 
-      <SearchFilters parties={parties} onFilterChange={setFilters} />
+      <SearchFilters parties={parties} topics={topics} onFilterChange={setFilters} />
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-600">

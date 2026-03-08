@@ -5,7 +5,7 @@ import PromiseCard from "./PromiseCard";
 const API_BASE = "http://localhost:3000";
 
 const POLITICIANS = ["carney", "poilievre", "singh", "blanchet", "may"];
-const TOPICS = ["Housing", "Climate", "Healthcare", "Economy", "Education", "Immigration"];
+const DEFAULT_TOPICS = ["Housing", "Climate", "Healthcare", "Economy", "Education", "Immigration"];
 
 const POLITICIAN_NAMES = {
   carney: "Mark Carney",
@@ -25,15 +25,20 @@ export default function Compare({ onViewChange }) {
   const [polA, setPolA] = useState("Mark Carney");
   const [polB, setPolB] = useState("Pierre Poilievre");
   const [promises, setPromises] = useState([]);
+  const [topics, setTopics] = useState(DEFAULT_TOPICS);
   const [loading, setLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState({});
 
   useEffect(() => {
-    Promise.all(
-      POLITICIANS.map((id) =>
+    Promise.all([
+      ...POLITICIANS.map((id) =>
         axios.get(`${API_BASE}/promises/${id}`).then((res) => res.data).catch(() => [])
-      )
-    ).then((promiseArrays) => {
+      ),
+      axios.get(`${API_BASE}/topics`).then((res) => res.data).catch(() => []),
+    ]).then((results) => {
+      const promiseArrays = results.slice(0, -1);
+      const topicsData = results[results.length - 1];
+      if (Array.isArray(topicsData) && topicsData.length > 0) setTopics(topicsData);
       const allPromises = promiseArrays.flat().map((p) => ({
         id: p._id,
         promise: p.text || p.promise,
@@ -173,7 +178,7 @@ export default function Compare({ onViewChange }) {
             onChange={(e) => setTopic(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-pink-500 outline-none font-semibold text-pink-700 bg-pink-50"
           >
-            {TOPICS.map((t) => (
+            {topics.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
           </select>

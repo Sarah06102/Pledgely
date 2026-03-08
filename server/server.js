@@ -81,6 +81,17 @@ app.get("/parties", (req, res) => {
   ]);
 });
 
+// GET distinct topics from all promises (for dynamic filters)
+app.get("/topics", async (req, res) => {
+  try {
+    const topics = await PromiseModel.distinct("topic");
+    const sorted = topics.filter((t) => t && String(t).trim()).sort((a, b) => a.localeCompare(b));
+    res.json(sorted);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET all promises
 app.get("/promises", async (req, res) => {
   try {
