@@ -12,7 +12,7 @@ Pledgely uses AI to scrape, analyze, and audit political promises made by Canadi
 - 📋 **Promise Database** — Browse promises by politician, party, topic, or status
 - 🤖 **AI Auditing** — Backboard AI agent searches the web and evaluates each promise
 - 📊 **Live Dashboard** — Real-time stats pulled directly from MongoDB
-- 🎥 **Video Upload** — Upload speeches or debates for AI claim extraction
+- 🎥 PDF Upload — Upload PDF's for AI claim extraction using Gemini API
 - ⚖️ **Compare** — Side-by-side politician comparison
 
 ---
