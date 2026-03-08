@@ -2,10 +2,10 @@ import React from "react";
 import LogoutButton from "./LogoutButton";
 
 const navItems = [
-  { id: "dashboard", label: "Dashboard", icon: "📊" },
-  { id: "promises", label: "Promise Database", icon: "📋" },
-  { id: "audit", label: "AI Auditor", icon: "📄" },
-  { id: "compare", label: "Compare", icon: "⚖️" },
+  { id: "dashboard", label: "Dashboard" },
+  { id: "promises", label: "Promise Database" },
+  { id: "audit", label: "AI Auditor" },
+  { id: "compare", label: "Compare" },
 ];
 
 export default function Navbar({ activeView, onViewChange }) {
@@ -21,19 +21,19 @@ export default function Navbar({ activeView, onViewChange }) {
               Pledgely
             </h1>
           </div>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-2">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onViewChange(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium border transition-all duration-150 ${
                   activeView === item.id
-                    ? "bg-pink-50 text-pink-700"
-                    : "text-slate-600 hover:bg-pink-50 hover:text-pink-700"
+                    ? "border-pink-600 text-pink-700 bg-pink-50 shadow-sm"
+                    : "border-slate-200 text-slate-600 bg-white/80 hover:border-pink-300 hover:text-pink-700 hover:bg-white"
                 }`}
               >
-                <span>{item.icon}</span>
                 <span className="hidden sm:inline">{item.label}</span>
+                <span className="sm:hidden">{item.label.split(" ")[0]}</span>
               </button>
             ))}
             <LogoutButton />
