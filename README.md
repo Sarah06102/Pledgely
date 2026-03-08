@@ -19,17 +19,41 @@ Pledgely uses AI to scrape, analyze, and audit political promises made by Canadi
 
 ## 🧠 How It Works
 
-1. Promises are seeded into MongoDB from `seed.js`
-2. `seedDocuments.js` sends each promise to a **Backboard AI agent** and `seedFromWeb.js` sends data from the web
-3. The agent searches the web, evaluates progress, and returns:
-   - `status` → Pending / In Progress / Fulfilled / Broken
-   - `completion_percentage` → 0–100%
-   - `ai_reasoning` → 2-sentence verdict with evidence
-   - `sources` → real news article URLs or news articles as pdf's uploaded
-4. Results are saved back to MongoDB
-5. The React frontend fetches and displays everything live
+Pledgely automatically tracks and audits Canadian political promises using AI. Here’s the end-to-end flow:
 
----
+1. **Data Collection**  
+   - `seedFromWeb.js` pulls the **official platform text** for major Canadian political leaders.  
+   - This includes party platforms, policy pages, and other verified sources.  
+
+2. **AI-Powered Promise Extraction**  
+   - The platform text is sent to a **Backboard AI Assistant**.  
+   - Backboard extracts **concrete, forward-looking promises** and categorizes each by topic (Housing, Economy, Healthcare, Climate, Education, Immigration).  
+   - Every promise starts with a **status of Pending** and **0% completion**.  
+
+3. **PDF Uploads & Gemini Extraction**  
+   - Users can upload **PDFs of news articles, press releases, or reports**.  
+   - The **Gemini AI service** parses these PDFs and extracts any political promises automatically.  
+   - Extracted promises are added to MongoDB alongside their source file, ready for AI auditing.
+
+4. **Database Storage**  
+   - Extracted promises, along with their source URLs or uploaded PDFs, and politician metadata, are saved into **MongoDB**.  
+   - Parties and politicians are automatically seeded if they aren’t already in the database.  
+
+5. **AI Promise Evaluation**  
+   - Backboard AI audits each promise in real-time.  
+   - Each promise receives:  
+     - `status`: Pending / In Progress / Fulfilled / Broken  
+     - `completion_percentage`: 0–100%  
+     - `ai_reasoning`: a short 2-sentence explanation with evidence  
+     - `sources`: links to news articles, PDFs, or official platform pages  
+
+6. **News Verification**  
+   - To ensure credibility, Pledgely checks **NewsAPI** and **GNews** for relevant, recent articles.  
+   - PDF uploads are included in the verification pipeline, ensuring only verifiable information is used.  
+
+7. **Frontend Display**  
+   - The React frontend fetches all promise data from MongoDB live.  
+   - Users can browse promises by **politician, party, topic, or status**, and compare leaders side by side.  
 
 ## 🛠️ Tech Stack
 
