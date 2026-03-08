@@ -10,7 +10,7 @@ const POLITICIAN_NAMES = {
   poilievre: "Pierre Poilievre",
   singh: "Jagmeet Singh",
   may: "Elizabeth May",
-  blanchet: "Yves-François Blanchet",
+  blanchet: "Yves-Francois Blanchet",
 };
 
 const POLITICIAN_PARTIES = {
@@ -18,7 +18,7 @@ const POLITICIAN_PARTIES = {
   "Pierre Poilievre": "Conservative Party",
   "Jagmeet Singh": "New Democratic Party",
   "Elizabeth May": "Green Party",
-  "Yves-François Blanchet": "Bloc Québécois",
+  "Yves-Francois Blanchet": "Bloc Québécois",
 };
 
 function capitalizeWords(str) {
@@ -73,15 +73,7 @@ export default function PromiseDatabase({ onViewChange }) {
     // 2. Topic Filter
     if (filters.topic && filters.topic !== "All Topics" && p.topic !== filters.topic) return false;
     // 3. Party Filter
-<<<<<<< HEAD
-    const derivedParty = POLITICIAN_PARTIES[p.politician] || p.party || "Other Party";
-=======
-    const derivedParty = p.politician === "Mark Carney" || p.politician === "carney" ? "Liberal Party"
-      : p.politician === "Pierre Poilievre" || p.politician === "poilievre" ? "Conservative Party"
-        : p.politician === "Jagmeet Singh" || p.politician === "singh" ? "New Democratic Party"
-          : p.politician === "Elizabeth May" || p.politician === "may" ? "Green Party"
-            : p.politician === "Yves-Francois Blanchet" || p.politician === "blanchet" ? "Bloc Québécois" : "Other";
->>>>>>> f493fd3 (ui fixes)
+const derivedParty = POLITICIAN_PARTIES[p.politician] || p.party || "Other Party";
 
     if (filters.party && filters.party !== "All Parties") {
       const fp = filters.party.toLowerCase();

@@ -19,7 +19,7 @@ const POLITICIAN_DISPLAY_NAMES = {
   poilievre: "Pierre Poilievre",
   singh: "Jagmeet Singh",
   may: "Elizabeth May",
-  blanchet: "Yves-François Blanchet",
+  blanchet: "Yves-Francois Blanchet",
 };
 
 const POLITICIAN_PARTIES = {
@@ -27,7 +27,13 @@ const POLITICIAN_PARTIES = {
   "Pierre Poilievre": "Conservative Party",
   "Jagmeet Singh": "New Democratic Party",
   "Elizabeth May": "Green Party",
-  "Yves-François Blanchet": "Bloc Québécois",
+  "Yves-Francois Blanchet": "Bloc Québécois",
+};
+
+const HARDCODED_LINKS = {
+  "federal pipelines pushing through quebec": "https://nationalpost.com/news/politics/bloc-quebecois-election-platform",
+  "emissions by 2050": "https://www.cbc.ca/news/politics/ndp-jagmeet-singh-net-zero-electric-grid-1.6936274",
+  "50% of all new cars": "https://liberal.ca/our-platform/zero-emissions-vehicles/",
 };
 
 export default function PromiseCard({ promise, onViewChange }) {
@@ -44,33 +50,16 @@ export default function PromiseCard({ promise, onViewChange }) {
     sources = [sources];
   }
 
-<<<<<<< HEAD
-  const rawPolitician = promise.politician || promise.politicianId || "";
+const rawPolitician = promise.politician || promise.politicianId || "";
   const displayName = POLITICIAN_DISPLAY_NAMES[rawPolitician] || capitalizeWords(rawPolitician) || "Unknown Politician";
 
   let displayParty = promise.party && promise.party.trim() !== "" && promise.party !== "Party"
     ? capitalizeWords(promise.party)
     : POLITICIAN_PARTIES[displayName] || "Other Party";
-=======
-  // Name mapping
-  let displayName = promise.politician || promise.politicianId || "Unknown Politician";
-  if (displayName === "carney") displayName = "Mark Carney";
-  else if (displayName === "poilievre") displayName = "Pierre Poilievre";
-  else if (displayName === "singh") displayName = "Jagmeet Singh";
-  else if (displayName === "may") displayName = "Elizabeth May";
-  else if (displayName === "blanchet") displayName = "Yves-Francois Blanchet";
 
-  // Party mapping
-  let displayParty = promise.party;
-  if (!displayParty || displayParty === "Party" || displayParty === "") {
-    if (displayName === "Mark Carney") displayParty = "Liberal Party";
-    else if (displayName === "Pierre Poilievre") displayParty = "Conservative Party";
-    else if (displayName === "Jagmeet Singh") displayParty = "New Democratic Party";
-    else if (displayName === "Elizabeth May") displayParty = "Green Party";
-    else if (displayName === "Yves-Francois Blanchet") displayParty = "Bloc Québécois";
-    else displayParty = "Other Party";
-  }
->>>>>>> f493fd3 (ui fixes)
+  const promiseText = (promise.promise || promise.text || "").toLowerCase();
+  const detailLink = promise.link || Object.entries(HARDCODED_LINKS).find(([key]) => promiseText.includes(key))?.[1];
+  const displaySources = detailLink ? [detailLink, ...sources] : sources;
 
   return (
     <article className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
@@ -125,8 +114,8 @@ export default function PromiseCard({ promise, onViewChange }) {
 
       {/* Sources */}
       <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
-        {sources.length > 0 ? (
-          sources.map((source, i) => {
+        {displaySources.length > 0 ? (
+          displaySources.map((source, i) => {
             if (!source.startsWith("http")) {
               if (source === "PDF Extraction" || source === "PDF Extraction via Script") {
                 return (

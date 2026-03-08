@@ -11,11 +11,7 @@ const POLITICIAN_NAMES = {
   carney: "Mark Carney",
   poilievre: "Pierre Poilievre",
   singh: "Jagmeet Singh",
-<<<<<<< HEAD
-  blanchet: "Yves-Fran?ois Blanchet",
-=======
-  blanchet: "Yves-Francois Blanchet",
->>>>>>> f493fd3 (ui fixes)
+blanchet: "Yves-Francois Blanchet",
   may: "Elizabeth May",
 };
 
@@ -86,13 +82,9 @@ export default function Compare({ onViewChange }) {
         >
           <td className="px-6 py-4 text-sm font-medium text-slate-900">
             <div className="flex items-center gap-2">
-<<<<<<< HEAD
-              <span className={`transform transition-transform ${isExpanded ? "rotate-90" : ""}`}>ÿÿÿ</span>
-=======
-              <svg className={`w-4 h-4 shrink-0 text-slate-500 transform transition-transform ${isExpanded ? "rotate-90" : ""}`} fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+<svg className={`w-4 h-4 shrink-0 text-slate-500 transform transition-transform ${isExpanded ? "rotate-90" : ""}`} fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                 <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
               </svg>
->>>>>>> f493fd3 (ui fixes)
               {name}
             </div>
           </td>
@@ -159,11 +151,7 @@ export default function Compare({ onViewChange }) {
             <option value="Mark Carney">Mark Carney (LPC)</option>
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
             <option value="Jagmeet Singh">Jagmeet Singh (NDP)</option>
-<<<<<<< HEAD
-            <option value="Yves-Fran?ois Blanchet">Yves-Fran?ois Blanchet (BQ)</option>
-=======
             <option value="Yves-Francois Blanchet">Yves-Francois Blanchet (BQ)</option>
->>>>>>> f493fd3 (ui fixes)
             <option value="Elizabeth May">Elizabeth May (Green)</option>
           </select>
         </div>
@@ -180,11 +168,7 @@ export default function Compare({ onViewChange }) {
             <option value="Pierre Poilievre">Pierre Poilievre (CPC)</option>
             <option value="Mark Carney">Mark Carney (LPC)</option>
             <option value="Jagmeet Singh">Jagmeet Singh (NDP)</option>
-<<<<<<< HEAD
-            <option value="Yves-Fran?ois Blanchet">Yves-Fran?ois Blanchet (BQ)</option>
-=======
             <option value="Yves-Francois Blanchet">Yves-Francois Blanchet (BQ)</option>
->>>>>>> f493fd3 (ui fixes)
             <option value="Elizabeth May">Elizabeth May (Green)</option>
           </select>
         </div>
