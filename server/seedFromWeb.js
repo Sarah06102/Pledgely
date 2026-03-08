@@ -123,8 +123,11 @@ async function runSeed() {
         ];
 
         for (const data of platformTexts) {
-            await PromiseModel.deleteMany({ politicianId: data.politicianId });
-            console.log(`\n🗑️ Cleared old promises from DB for ${data.politicianId}.`);
+            const existingCount = await PromiseModel.countDocuments({ politicianId: data.politicianId });
+            if (existingCount > 0) {
+                console.log(`\n⏭️ Skipping ${data.politicianId}... (Found ${existingCount} existing promises in DB)`);
+                continue;
+            }
 
             try {
                 // 4. Extract Promises via Backboard

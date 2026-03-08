@@ -71,7 +71,7 @@ async function verifyPromises(promises) {
 
     for (const promise of promises) {
         const response = await backboardRequest(`/threads/${thread.thread_id}/messages`, "POST", {
-            content: `Evaluate this promise: "${promise.original_quote}"
+            content: `Evaluate this promise: "${promise.original_quote || promise.text}"
             Respond in pure JSON only, no markdown, no backticks:
             {
                 "status": "In Progress or Fulfilled or Broken or Pending",
@@ -86,6 +86,10 @@ async function verifyPromises(promises) {
         const cleaned = cleanJSON(response.content);
         console.log(`Cleaned response:`, cleaned);
         const auditResult = JSON.parse(cleaned);
+        // Ensure rationale maps cleanly
+        if (!auditResult.ai_reasoning && auditResult.rationale) {
+            auditResult.ai_reasoning = auditResult.rationale;
+        }
         results.push({ promise_id: promise._id, ...auditResult });
     }
 
