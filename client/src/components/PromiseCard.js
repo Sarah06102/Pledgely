@@ -44,12 +44,33 @@ export default function PromiseCard({ promise, onViewChange }) {
     sources = [sources];
   }
 
+<<<<<<< HEAD
   const rawPolitician = promise.politician || promise.politicianId || "";
   const displayName = POLITICIAN_DISPLAY_NAMES[rawPolitician] || capitalizeWords(rawPolitician) || "Unknown Politician";
 
   let displayParty = promise.party && promise.party.trim() !== "" && promise.party !== "Party"
     ? capitalizeWords(promise.party)
     : POLITICIAN_PARTIES[displayName] || "Other Party";
+=======
+  // Name mapping
+  let displayName = promise.politician || promise.politicianId || "Unknown Politician";
+  if (displayName === "carney") displayName = "Mark Carney";
+  else if (displayName === "poilievre") displayName = "Pierre Poilievre";
+  else if (displayName === "singh") displayName = "Jagmeet Singh";
+  else if (displayName === "may") displayName = "Elizabeth May";
+  else if (displayName === "blanchet") displayName = "Yves-Francois Blanchet";
+
+  // Party mapping
+  let displayParty = promise.party;
+  if (!displayParty || displayParty === "Party" || displayParty === "") {
+    if (displayName === "Mark Carney") displayParty = "Liberal Party";
+    else if (displayName === "Pierre Poilievre") displayParty = "Conservative Party";
+    else if (displayName === "Jagmeet Singh") displayParty = "New Democratic Party";
+    else if (displayName === "Elizabeth May") displayParty = "Green Party";
+    else if (displayName === "Yves-Francois Blanchet") displayParty = "Bloc Québécois";
+    else displayParty = "Other Party";
+  }
+>>>>>>> f493fd3 (ui fixes)
 
   return (
     <article className="group bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200">
