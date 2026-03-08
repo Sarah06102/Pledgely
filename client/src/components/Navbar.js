@@ -29,7 +29,7 @@ export default function Navbar({ activeView, onViewChange }) {
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   activeView === item.id
                     ? "bg-pink-50 text-pink-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    : "text-slate-600 hover:bg-pink-50 hover:text-pink-700"
                 }`}
               >
                 <span>{item.icon}</span>
